@@ -1,33 +1,53 @@
 param(
+    [string]$domain = [string]::Empty,
     [string]$user = $(throw "-user is required."),
     [string]$pass = $(Read-Host -asSecureString "Input password" ),
     [string]$historycountfrom,
-	[string]$dom = $env:computername
+    [string]$hostname = $env:computername
 )
 
 # IMPORTANT NOTE FOR THE SCRIPT IN DEBUG SO THE USERNAME/PASSWORD IS PRE-ENTERED
 # IMPORTANT NOTE FOR THE SCRIPT IN DEBUG SO THE USERNAME/PASSWORD IS PRE-ENTERED
 # IMPORTANT NOTE FOR THE SCRIPT IN DEBUG SO THE USERNAME/PASSWORD IS PRE-ENTERED
 # IMPORTANT NOTE FOR THE SCRIPT IN DEBUG SO THE USERNAME/PASSWORD IS PRE-ENTERED
-#$dom  = 'backusrv' # host/ip-address
-#$user = 'zabbixread'
+#$domain = ''
+#$user = 'backup'
 #$pass = ''
-#$historycountfrom = 'VMBackupFinishedCount'
+#$historycountfrom = 'JobSuccessCount'
+#$hostname  = 'localhost' # host/ip-address
 
 # You must try to set the right JobID for the VM job (try it first with 1): 
-$RecentJobID = 1
+$RecentJobID = 2
 
-if($dom -eq "") { $dom = $env:computername }
+if($hostname -eq "") { $hostname = $env:computername }
 
 # hours back in history
 $Hourstogoback=24
 
 # parameters for WDSL call. Set the HTTPS/HTTPS protocol and the used port
-$protocol = "http" # https or https
+$protocol = "https" # https or https
 $port = 8015 #port nummer
 $Debug=$False
 
+Function NewJobHistoryObj($JobTypes, $JobStatuses)
+{
+    $jobHistoryCollection = @()
+
+    $JobTypes | % {
+        $jobHistoryData = New-Object PSObject
+        Add-Member -InputObject $jobHistoryData -MemberType NoteProperty -Name JobType -Value $_
+        Add-Member -InputObject $jobHistoryData -MemberType NoteProperty -Name JobStatuses -Value @{}
+        $JobStatuses | % { $jobHistoryData.JobStatuses.Add($_, 0) }
+
+        $jobHistoryCollection += $jobHistoryData
+    }
+
+    return $jobHistoryCollection
+}
+
 # This Don’t forget to change IP address/host name for domain variable above and in WSDL URI below 
+$AllProtocols = [System.Net.SecurityProtocolType]'Tls11,Tls12'
+[System.Net.ServicePointManager]::SecurityProtocol = $AllProtocols
 
 if($protocol -eq "https") {
 	[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$True}
@@ -35,7 +55,7 @@ if($protocol -eq "https") {
 	[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$False}
 }
 
-$URI = $protocol+"://"+$dom+":"+$port+"/services/UDPService?wsdl"
+$URI = $protocol+"://"+$hostname+":"+$port+"/services/UDPService?wsdl"
 $agent = New-WebServiceProxy -Uri $URI -Namespace WebServiceProxy -Class UDPAgent
 if($Debug) { "Agent: $agent" }
 
@@ -43,12 +63,19 @@ if($Debug) { "Agent: $agent" }
 $cookieContainer = New-Object system.Net.CookieContainer
 $agent.CookieContainer = $cookieContainer
 
+#$URI = "https://localhost:8015/services/UDPService?wsdl"
+#$agent = New-WebServiceProxy -Uri $URI  -Namespace WebServiceProxy -Class UDPAgent
+#$cookieContainer = New-Object system.Net.CookieContainer
+#$agent.CookieContainer = $cookieContainer
+
+#$res = $agent.login($user,$pass, $domain)
+
 # This prints all available methods 
-$agentinfo = $agent | get-member -type method
+#$agentinfo = $agent | get-member -type method
 
 #lets authenticate against agent web service and print session ID 
-if($Debug) { "agent.login($user, $pass, $dom)" }
-$res = $agent.login($user, $pass, $dom)
+if($Debug) { "agent.login($user,$pass,$domain)" }
+$res = $agent.login($user,$pass,$domain)
 if($Debug) { "Created new session $res" }
 
 # Should consider using a DateTime CimType and migrating service into automation policy with a Powershell script instead of epoch
