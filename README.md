@@ -12,7 +12,7 @@ Installation steps für Arcserve UDP VM Backup checks:
 4. Check teh script for correct results of the VM backup jobs.
 5. Add the UserParameter to the zabbix_agentd.conf:
    UserParameter=custom.arcserveudpvm[*],powershell.exe -NoProfile -ExecutionPolicy Bypass -file "C:\Program Files\Zabbix Agent\Scripts\Arcserve_UDP_VMCount.ps1" $1 $2 $3 $4
-6. Import des Zabbix Template "Template_Arcserve UDP VM Backup.xml" to the Zabbix Server.
+6. Import des Zabbix Template "Template_Arcserve UDP VM Backup Check.xml" to the Zabbix Server.
 7. Assign the template to the Zabbix host for ARcserve UDP.
-7. Modify the macro "{$ARCSERVE_USER}" and "{$ARCSERVE_PASS} with the read only user login for Arcserve UDP.
+7. Modify the macro "{$ARCSERVE_DOMAIN}", "{$ARCSERVE_USER}" and "{$ARCSERVE_PASS} with the read only user login for Arcserve UDP.
 8. Check the latest value of application "ArcserveUDP Jobs".
