@@ -17,7 +17,7 @@ param(
 #$hostname  = 'localhost' # host/ip-address
 
 # You must try to set the right JobID for the VM job (try it first with 1): 
-$RecentJobID = 2
+$RecentJobID = 1
 
 if($hostname -eq "") { $hostname = $env:computername }
 
@@ -45,7 +45,7 @@ Function NewJobHistoryObj($JobTypes, $JobStatuses)
     return $jobHistoryCollection
 }
 
-# This Don’t forget to change IP address/host name for domain variable above and in WSDL URI below 
+# This Donâ€™t forget to change IP address/host name for domain variable above and in WSDL URI below 
 $AllProtocols = [System.Net.SecurityProtocolType]'Tls11,Tls12'
 [System.Net.ServicePointManager]::SecurityProtocol = $AllProtocols
 
@@ -62,16 +62,6 @@ if($Debug) { "Agent: $agent" }
 # We need cookie container to maintain session cookie 
 $cookieContainer = New-Object system.Net.CookieContainer
 $agent.CookieContainer = $cookieContainer
-
-#$URI = "https://localhost:8015/services/UDPService?wsdl"
-#$agent = New-WebServiceProxy -Uri $URI  -Namespace WebServiceProxy -Class UDPAgent
-#$cookieContainer = New-Object system.Net.CookieContainer
-#$agent.CookieContainer = $cookieContainer
-
-#$res = $agent.login($user,$pass, $domain)
-
-# This prints all available methods 
-#$agentinfo = $agent | get-member -type method
 
 #lets authenticate against agent web service and print session ID 
 if($Debug) { "agent.login($user,$pass,$domain)" }
