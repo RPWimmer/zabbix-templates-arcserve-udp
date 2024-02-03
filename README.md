@@ -9,7 +9,7 @@ Installation steps für Arcserve UDP VM Backup checks:
 1. Copy the script file "Arcserve_UDP_VMCount.ps1" to your Zabbix Agent Script folder on the Arcserve UDP Host.
 2. Modify script parameter if necessary (protocol, port, JobID)
 3. Test the script manually on the Arcserve UDP Host:
-   .\Arcserve_UDP_VMCount.ps1 <domain> <username> '<password>' JobSuccessCount <hostname or ip>
+   .\Arcserve_UDP_VMCount.ps1 -domain xxx -user xxx -pass 'xxx' JobSuccessCount -hostname xxx
 5. For debugging of errors you can enable "$Debug=$True" in the script.
 6. Check the script for correct results of the VM backup jobs.
 7. Add the UserParameter to the zabbix_agentd.conf:
