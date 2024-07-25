@@ -6,7 +6,7 @@ This script only counts the number of successful or unsuccessful backup jobs and
 
 Installation steps für Arcserve UDP VM Backup checks:
 
-1. Copy the script file "Arcserve_UDP_VMCount.ps1" to your Zabbix Agent Script folder on the Arcserve UDP Host.
+1. Copy the script file "Arcserve_UDP_VMCount.ps1" to your Zabbix Agent Script folder on the Arcserve UDP Host. Link: https://github.com/RPWimmer/zabbix-templates-arcserve-udp
 2. Modify script parameter if necessary (protocol, port, JobID)
 3. Test the script manually on the Arcserve UDP Host:
    .\Arcserve_UDP_VMCount.ps1 -domain xxx -user xxx -pass 'xxx' JobSuccessCount -hostname xxx
